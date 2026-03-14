@@ -31,57 +31,7 @@ def translate_song_lyrics(english_para):
 
 # Example: A paragraph from "Perfect" by Ed Sheeran
 lyrics = """
-I could say I've seen this coming for some time
-The way you seem to stare right through my eyes
-Don't you trust me?
-You can tell me anything
-I already see right through your disguise
-
-Let me know if I'm reaching
-But I can feel this breaking
-And I don't want to have to live on edge anymore
-I can hear when you're sleeping
-You're telling secrets as you're dreaming
-I'm so unfazed I hardly feel upset anymore
-I don't want no trouble, baby
-I just want to say
-
-If this is how it ends, then please do one last thing for me
-Kiss me harder
-Kiss mе harder
-I know what it meant, but we'rе no longer what we need
-Miss me harder
-Miss me harder
-
-I have to ask, was it him?
-Or was it all on me
-Or was it all because you listened to your friends?
-You'll always be the one that got away
-There's no debate
-But leaving with questions is the worst kind of pain
-
-Let me know if I'm reaching
-But I can feel this breaking
-And I don't want to have to live on edge anymore
-I can hear when you're sleeping
-You're telling secrets as you're dreaming
-I'm so unfazed I hardly feel upset anymore
-I don't want no trouble, baby
-I just want to say
-
-If this is how it ends, then please do one last thing for me
-Kiss me harder
-Kiss me harder
-I know what it meant, but we're no longer what we need
-Miss me harder
-Miss me harder
-
-Kiss me harder
-
-Let me know if I'm reaching
-I can feel this breaking
-Let me know if I'm reaching
-I pray to God I'm dreaming
+song lyrics here
 """
 
 print(f"--- Original English ---\n{lyrics}\n")

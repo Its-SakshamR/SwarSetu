@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lyrics Translator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .half {
+            flex: 1;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        .top-half {
+            background-color: #f4f4f9;
+            border-bottom: 2px solid #ccc;
+        }
+        .bottom-half {
+            background-color: #ffffff;
+            overflow-y: auto;
+        }
+        textarea {
+            flex: 1;
+            width: 100%;
+            margin-top: 10px;
+            padding: 15px;
+            font-size: 16px;
+            resize: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        select, button {
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .output {
+            white-space: pre-wrap; /* Keeps line breaks from the lyrics */
+            font-size: 18px;
+            line-height: 1.6;
+            padding: 10px 0;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3; /* Light grey background */
+            border-top: 4px solid #28a745; /* Green spinning element */
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: none; /* Hidden by default */
+            margin-left: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .button-disabled {
+            background-color: #6c757d !important;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="half top-half">
+        <h2>English Lyrics</h2>
+        <form id="translate-form" method="POST" style="display: flex; flex-direction: column; height: 100%;">
+            {% csrf_token %}
+            <textarea name="lyrics" placeholder="Paste your English lyrics here...">{{ original_lyrics }}</textarea>
+            
+            <div class="controls">
+                <select name="language">
+                    <option value="hi" {% if target_lang == 'hi' %}selected{% endif %}>Hindi</option>
+                    <option value="bn" {% if target_lang == 'bn' %}selected{% endif %}>Bengali</option>
+                </select>
+                <button type="submit" id="submit-btn">Translate</button>
+                <div id="loading-spinner" class="spinner"></div>
+                <span id="loading-text" style="display: none; margin-left: 10px; color: #555;">Translating... Please wait.</span>
+            </div>
+        </form>
+    </div>
+
+    <div class="half bottom-half">
+        <h2>Translated Lyrics</h2>
+        <div class="output">{{ translated_lyrics|linebreaksbr }}</div>
+    </div>
+
+    <script>
+        document.getElementById('translate-form').addEventListener('submit', function() {
+            var btn = document.getElementById('submit-btn');
+            var spinner = document.getElementById('loading-spinner');
+            var text = document.getElementById('loading-text');
+
+            // Disable the button and change its appearance
+            btn.disabled = true;
+            btn.classList.add('button-disabled');
+            btn.innerText = "Processing...";
+
+            // Show the spinner and loading text
+            spinner.style.display = "block";
+            text.style.display = "inline";
+        });
+    </script>
+</body>
+</html>
