@@ -94,6 +94,10 @@
             <textarea name="lyrics" placeholder="Paste your English lyrics here...">{{ original_lyrics }}</textarea>
             
             <div class="controls">
+                <select name="engine">
+                    <option value="dic" {% if source_trans == 'dic' %}selected{% endif %}>Basic translation</option>
+                    <option value="api" {% if source_trans == 'api' %}selected{% endif %}>AI translation</option>
+                </select>
                 <select name="language">
                     <option value="hi" {% if target_lang == 'hi' %}selected{% endif %}>Hindi</option>
                     <option value="bn" {% if target_lang == 'bn' %}selected{% endif %}>Bengali</option>
