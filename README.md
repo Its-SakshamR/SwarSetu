@@ -19,4 +19,4 @@ python -m spacy download xx_sent_ud_sm?
 
 ## About the AI translation
 
-Please change the GEMINI_API_KEY in settings.py file to use your own Gemini Api key (Gemini may flag the key if used by multiple devices).
+Please change the GEMINI_API_KEY in settings.py file to use your own Gemini Api key.
