@@ -5,15 +5,15 @@ Swarsetu is a single-page Django web application designed to translate English s
 ## Important: First-Time Setup
 
 ```bash
-# 1. Install dependencies
-pip install django argostranslate spacy
+# 1. Set up a virtual env and activate it
+python3 -m venv venv
+source venv/bin/activate
 
-# 2. Download the offline translation models
+# 2. Download the requirements
+pip install -r requirements.txt
+
+# 3. Download offline dict
 python download_models.py
-
-# 3. Download the SpaCy dependencies for offline chunking
-python -m spacy download xx_ent_wiki_sm
-python -m spacy download xx_sent_ud_sm?
 
 ```
 
