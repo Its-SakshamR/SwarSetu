@@ -120,12 +120,10 @@
             var spinner = document.getElementById('loading-spinner');
             var text = document.getElementById('loading-text');
 
-            // Disable the button and change its appearance
             btn.disabled = true;
             btn.classList.add('button-disabled');
             btn.innerText = "Processing...";
 
-            // Show the spinner and loading text
             spinner.style.display = "block";
             text.style.display = "inline";
         });
