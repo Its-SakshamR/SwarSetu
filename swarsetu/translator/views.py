@@ -1,6 +1,9 @@
 import os
-# Force Argos to use the offline SpaCy engine instead of Stanza
-os.environ['ARGOS_CHUNK_TYPE'] = 'SPACY'
+os.environ['ARGOS_CHUNK_TYPE'] = 'SPACY'        
+# This is used because the basic translation (offline) was accessing the stanza chunker
+# which was accessing internet (Stanza checks github to see if it's the latest version),
+# but we wanted to run it offline, so we opted for spacy chunker, which is not only fast
+# but also doesn't require internet access.
 
 from django.shortcuts import render
 import argostranslate.translate
