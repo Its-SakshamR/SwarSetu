@@ -77,7 +77,7 @@ def home(request):
                 # except ImportError:
                 #     raise RuntimeError(
                 #         "google-genai package is not installed. "
-                #         "Run: pip install google-genai"
+                #         "Run: pip install google-genai."
                 #     )
                 except Exception as e:
                     translated_lyrics = f"Translation Error: {str(e)}"
