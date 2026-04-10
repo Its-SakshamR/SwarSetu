@@ -1,6 +1,6 @@
 # Swarsetu: Lyrics Translator
 
-Swarsetu is a single-page Django web application designed to translate English song lyrics into Hindi and Bengali. It currently supports both offline dictionary based BASIC translation and online AI translation. 
+Swarsetu is a single-page Django web application designed to translate English, Hindi, Bengali and Urdu song lyrics into each other. It currently supports both offline dictionary based BASIC translation and online AI translation. 
 
 ## Important: First-Time Setup
 
