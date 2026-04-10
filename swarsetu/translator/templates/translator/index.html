@@ -42,8 +42,18 @@
         .controls {
             margin-top: 15px;
             display: flex;
-            gap: 10px;
+            gap: 15px;
             align-items: center;
+        }
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .control-group label {
+            font-weight: bold;
+            font-size: 14px;
+            color: #444;
         }
         select, button {
             padding: 10px 15px;
@@ -115,19 +125,38 @@
             <textarea name="lyrics" placeholder="Paste your English lyrics here...">{{ original_lyrics }}</textarea>
             
             <div class="controls">
-                <select name="engine">
-                    <option value="dic" {% if source_trans == 'dic' %}selected{% endif %}>Basic translation</option>
-                    <option value="api" {% if source_trans == 'api' %}selected{% endif %}>AI translation</option>
-                </select>
-                <select name="language">
-                    <option value="hi" {% if target_lang == 'hi' %}selected{% endif %}>Hindi</option>
-                    <option value="bn" {% if target_lang == 'bn' %}selected{% endif %}>Bengali</option>
-                    <option value="ur" {% if target_lang == 'ur' %}selected{% endif %}>Urdu</option>
-                </select>
-                <select name="script">
-                    <option value="orig" {% if script_selected == 'orig' %}selected{% endif %}>Original Script</option>
-                    <option value="iast" {% if script_selected == 'iast' %}selected{% endif %}>IAST</option>
-                </select>
+                <div class="control-group">
+                    <label for="engine">Engine:</label>
+                    <select name="engine" id="engine">
+                        <option value="dic" {% if source_trans == 'dic' %}selected{% endif %}>Basic</option>
+                        <option value="api" {% if source_trans == 'api' %}selected{% endif %}>AI</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="orig_lang">From:</label>
+                    <select name="orig_lang" id="orig_lang">
+                        <option value="en" {% if orig_lang == 'en' %}selected{% endif %}>English</option>
+                        <option value="hi" {% if orig_lang == 'hi' %}selected{% endif %}>Hindi</option>
+                        <option value="bn" {% if orig_lang == 'bn' %}selected{% endif %}>Bengali</option>
+                        <option value="ur" {% if orig_lang == 'ur' %}selected{% endif %}>Urdu</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="target_lang">To:</label>
+                    <select name="target_lang" id="target_lang">
+                        <option value="hi" {% if target_lang == 'hi' %}selected{% endif %}>Hindi</option>
+                        <option value="bn" {% if target_lang == 'bn' %}selected{% endif %}>Bengali</option>
+                        <option value="ur" {% if target_lang == 'ur' %}selected{% endif %}>Urdu</option>
+                        <option value="en" {% if target_lang == 'en' %}selected{% endif %}>English</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="script">Script:</label>
+                    <select name="script" id="script">
+                        <option value="orig" {% if script_selected == 'orig' %}selected{% endif %}>Native</option>
+                        <option value="iast" {% if script_selected == 'iast' %}selected{% endif %}>Romanized</option>
+                    </select>
+                </div>
                 <button type="submit" id="submit-btn">Translate</button>
                 <div id="loading-spinner" class="spinner"></div>
                 <span id="loading-text" style="display: none; margin-left: 10px; color: #555;">Translating... Please wait.</span>

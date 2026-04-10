@@ -14,6 +14,7 @@ from indic_transliteration.sanscript import transliterate
 def home(request):
     original_lyrics = ""
     translated_lyrics = ""
+    orig_lang = ""
     target_lang = ""
     source_trans = ""
     script_selected = ""
@@ -22,9 +23,28 @@ def home(request):
 
     if request.method == "POST":
         original_lyrics = request.POST.get('lyrics', '')
-        target_lang = request.POST.get('language', 'hi')
+        orig_lang = request.POST.get('orig_lang', 'en')
+        target_lang = request.POST.get('target_lang', 'hi')
         script_selected = request.POST.get('script', 'orig')
         source_trans = request.POST.get('engine', 'dic')
+        
+        if(orig_lang == target_lang):
+            return render(request, 'translator/index.html', {
+                'source_trans': source_trans,
+                'original_lyrics': original_lyrics,
+                'translated_lyrics': original_lyrics,
+                'orig_lang': orig_lang,
+                'target_lang': target_lang,
+                'script_selected': script_selected
+            })
+        
+        lang_map = {
+            "hi": "Hindi",
+            "bn": "Bengali",
+            "ur": "Urdu",
+            "en": "English"
+        }
+        orig_lang_name = lang_map.get(orig_lang, "the original language")
 
         if original_lyrics:
             if source_trans == "api":
@@ -34,13 +54,13 @@ def home(request):
                         'script': 'Devanagari Hindi script',
                         'instruction': (
                             "You are a professional Bollywood songwriter fluent in Hindi. "
-                            "Translate the following English song lyrics into Hindi. Requirements:\n"
+                            f"Translate the following {orig_lang_name} song lyrics into Hindi. Requirements:\n"
                             "1. Maintain a rhyme scheme and rhythm so it can be sung.\n"
                             "2. Capture the feel and emotion — take poetic license where needed.\n"
                             "3. CRITICAL: Respond ONLY in proper Hindi Devanagari script (हिन्दी). "
                             "Do NOT use Roman script, transliteration, or Hinglish. "
                             "Every word must be written in Devanagari characters.\n"
-                            "4. No explanations, no English, no romanized text — only the translated lyrics in Devanagari."
+                            f"4. No explanations, no {orig_lang_name}, no romanized text — only the translated lyrics in Devanagari."
                         ),
                     },
                     'bn': {
@@ -48,13 +68,13 @@ def home(request):
                         'script': 'Bengali script',
                         'instruction': (
                             "You are a professional Bengali songwriter and poet. "
-                            "Translate the following English song lyrics into Bengali. Requirements:\n"
+                            f"Translate the following {orig_lang_name} song lyrics into Bengali. Requirements:\n"
                             "1. Maintain a rhyme scheme and rhythm so it can be sung.\n"
                             "2. Capture the feel and emotion — take poetic license where needed.\n"
                             "3. CRITICAL: Respond ONLY in proper Bengali Devanagari script (বাংলা). "
                             "Do NOT use Roman script, transliteration, or any English words. "
                             "Every word must be written in Bengali alphabets.\n"
-                            "4. No explanations, no English, no romanized text — only the translated lyrics in Bengali."
+                            f"4. No explanations, no {orig_lang_name}, no romanized text — only the translated lyrics in Bengali."
                         ),
                     },
                     'ur': {
@@ -62,13 +82,27 @@ def home(request):
                         'script': 'Nastaliq Urdu script',
                         'instruction': (
                             "You are a professional Urdu songwriter and poet. "
-                            "Translate the following English song lyrics into Urdu. Requirements:\n"
+                            f"Translate the following {orig_lang_name} song lyrics into Urdu. Requirements:\n"
                             "1. Maintain a rhyme scheme and rhythm so it can be sung.\n"
                             "2. Capture the feel and emotion — take poetic license where needed.\n"
                             "3. CRITICAL: Respond ONLY in proper Nastaliq Urdu script (اردو). "
                             "Do NOT use Roman script, transliteration, or any English words. "
                             "Every word must be written in Urdu alphabets.\n"
-                            "4. No explanations, no English, no romanized text — only the translated lyrics in Urdu."
+                            f"4. No explanations, no {orig_lang_name}, no romanized text — only the translated lyrics in Urdu."
+                        )
+                    },
+                    'en': {
+                        'name': 'English',
+                        'script': 'Latin script',
+                        'instruction': (
+                            "You are a professional songwriter and poet fluent in English. "
+                            f"Translate the following {orig_lang_name} song lyrics into English. Requirements:\n"
+                            "1. Maintain a rhyme scheme and rhythm so it can be sung.\n"
+                            "2. Capture the feel and emotion — take poetic license where needed.\n"
+                            "3. CRITICAL: Respond ONLY in proper English Latin script. "
+                            "Do NOT use any non-English words. "
+                            "Every word must be written in English alphabets.\n"
+                            f"4. No explanations, no {orig_lang_name}, no romanized text — only the translated lyrics in English."
                         )
                     }
                 }
@@ -113,9 +147,17 @@ def home(request):
                         if line.strip() == "":
                             translated_lines.append("")
                         else:
-                            translated_line = argostranslate.translate.translate(
-                                line, 'en', target_lang
-                            )
+                            if orig_lang == 'en' or target_lang == 'en':
+                                translated_line = argostranslate.translate.translate(
+                                    line, orig_lang, target_lang
+                                )
+                            else:
+                                intermediate_line = argostranslate.translate.translate(
+                                    line, orig_lang, 'en'
+                                )
+                                translated_line = argostranslate.translate.translate(
+                                    intermediate_line, 'en', target_lang
+                                )
                             translated_lines.append(translated_line)
                             
                     translated_lyrics = '\n'.join(translated_lines)
@@ -158,7 +200,7 @@ def home(request):
         }
         return "".join(urdu_map.get(char, char) for char in text)
     
-    if script_selected == "iast" and translated_lyrics:
+    if script_selected == "iast" and translated_lyrics and target_lang in ['hi', 'bn', 'ur']:
         try:
             source_script = sanscript.DEVANAGARI if target_lang == 'hi' else sanscript.BENGALI
             for line in translated_lyrics.split('\n'):
@@ -182,6 +224,7 @@ def home(request):
         'source_trans': source_trans,
         'original_lyrics': original_lyrics,
         'translated_lyrics': translated_lyrics,
+        'orig_lang': orig_lang,
         'target_lang': target_lang,
         'script_selected': script_selected
     })
