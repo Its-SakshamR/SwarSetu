@@ -1,12 +1,11 @@
-# download_models.py
 import argostranslate.package
 
 print("Updating package index...")
 argostranslate.package.update_package_index()
 available_packages = argostranslate.package.get_available_packages()
 
-# Target language codes: 'hi' for Hindi, 'bn' for Bengali
-for to_lang in ['hi', 'bn']:
+# Target language codes: 'hi' for Hindi, 'bn' for Bengali, 'ur' for Urdu
+for to_lang in ['hi', 'bn', 'ur']:
     print(f"Locating English -> {to_lang} package...")
     package_to_install = next(
         filter(

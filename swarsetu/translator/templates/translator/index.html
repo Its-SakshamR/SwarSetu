@@ -11,7 +11,7 @@
             padding: 0;
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            height: 98.6vh;
         }
         .half {
             flex: 1;
@@ -26,6 +26,7 @@
         }
         .bottom-half {
             background-color: #ffffff;
+            border-bottom: 2px solid #ccc;
             overflow-y: auto;
         }
         textarea {
@@ -59,11 +60,31 @@
         button:hover {
             background-color: #218838;
         }
+        #download-pdf-btn {
+            background-color: #28a745;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        #download-pdf-btn:hover {
+            background-color: #218838;
+        }
+        #download-txt-btn {
+            background-color: #28a745;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        #download-txt-btn:hover {
+            background-color: #218838;
+        }
+        .output-container {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px; 
+        }
         .output {
-            white-space: pre-wrap; /* Keeps line breaks from the lyrics */
+            white-space: pre-wrap; 
             font-size: 18px;
             line-height: 1.6;
-            padding: 10px 0;
         }
         .spinner {
             border: 4px solid #f3f3f3; /* Light grey background */
@@ -101,6 +122,11 @@
                 <select name="language">
                     <option value="hi" {% if target_lang == 'hi' %}selected{% endif %}>Hindi</option>
                     <option value="bn" {% if target_lang == 'bn' %}selected{% endif %}>Bengali</option>
+                    <option value="ur" {% if target_lang == 'ur' %}selected{% endif %}>Urdu</option>
+                </select>
+                <select name="script">
+                    <option value="orig" {% if script_selected == 'orig' %}selected{% endif %}>Original Script</option>
+                    <option value="iast" {% if script_selected == 'iast' %}selected{% endif %}>IAST</option>
                 </select>
                 <button type="submit" id="submit-btn">Translate</button>
                 <div id="loading-spinner" class="spinner"></div>
@@ -110,10 +136,21 @@
     </div>
 
     <div class="half bottom-half">
-        <h2>Translated Lyrics</h2>
-        <div class="output">{{ translated_lyrics|linebreaksbr }}</div>
+        <div class="bottom-header">
+            <h2>Translated Lyrics</h2>
+            {% if translated_lyrics %}
+                <button id="download-txt-btn">Download TXT</button>
+                <button id="download-pdf-btn">Download PDF</button>
+                <button id="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('translation-result').innerText).then(() => { alert('Translated lyrics copied to clipboard!'); });">Copy to Clipboard</button>
+            {% endif %}
+        </div>
+        
+        <div class="output-container">
+            <div id="translation-result" class="output" {% if target_lang == 'ur' and script_selected == 'orig' %}dir="rtl"{% endif %}>{{ translated_lyrics|linebreaksbr }}</div>
+        </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         document.getElementById('translate-form').addEventListener('submit', function() {
             var btn = document.getElementById('submit-btn');
@@ -127,6 +164,64 @@
             spinner.style.display = "block";
             text.style.display = "inline";
         });
+
+        var pdfBtn = document.getElementById('download-pdf-btn');
+        if(pdfBtn){
+            pdfBtn.addEventListener('click', function(){
+                var orig_lyrics = document.getElementById('translation-result').innerText;
+                var save_lyrics = document.createElement('div');
+
+                if (document.getElementById('translation-result').getAttribute('dir') === 'rtl') {
+                    save_lyrics.setAttribute('dir', 'rtl');
+                    save_lyrics.style.textAlign = 'right';
+                }
+                
+                var lines = orig_lyrics.split('\n');
+
+                var safeHtml = lines.map(function(line) {
+                    var content = line.trim() === '' ? '&nbsp;' : line;
+                    return '<div class="pdf-line-avoid" style="min-height: 1.6em; line-height: 1.6;">' + content + '</div>';
+                }).join('');
+                
+                save_lyrics.innerHTML = safeHtml;
+                
+                save_lyrics.style.padding = '20px';
+                save_lyrics.style.fontSize = '16px';
+                save_lyrics.style.fontFamily = 'Arial, sans-serif';
+
+                var pdf = {
+                    margin: 1,
+                    filename: 'translated-lyrics.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait'},
+                    pagebreak: { mode: ['css', 'legacy'], avoid: '.pdf-line-avoid' }
+                };
+
+                var original_text = this.innerText;
+                this.innerText = "Generating PDF...";
+
+                html2pdf().set(pdf).from(save_lyrics).save().then(() => {
+                    this.innerText = original_text;
+                });
+            });
+        }
+
+        var txtBtn = document.getElementById('download-txt-btn');
+        if(txtBtn){
+            txtBtn.addEventListener('click', function(){
+                var orig_lyrics = document.getElementById('translation-result').innerText;
+                var blob = new Blob([orig_lyrics], { type: 'text/plain' });
+                var link = document.createElement('a');
+                var url = URL.createObjectURL(blob);
+                link.href = url;
+                link.download = 'translated-lyrics.txt';
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        }
     </script>
 </body>
 </html>
